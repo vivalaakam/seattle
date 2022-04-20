@@ -1,0 +1,13 @@
+{
+  "name": "vivalaakam_seattle_client",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "eslint --ext .js,.ts src/*",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\""
+  },
+  "author": "Andrey Makarov",
+  "license": "ISC"
+}
