@@ -31,8 +31,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          registry-url: https://npm.pkg.github.com/
-          scope: '@vivalaakam'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm run build --ws
       - run: npm publish --ws
