@@ -1,32 +1,43 @@
-import { createHash } from 'crypto';
-import { makeId } from './make-id';
-import { Db, Filter } from 'mongodb';
-import { BatchRequest, Listener, Params, StoreObject } from './types';
-import { match, pathToRegexp } from 'path-to-regexp';
-import { IncomingMessage, ServerResponse } from 'http';
-import { NotFound } from './not-found';
 import * as url from 'url';
+import { IncomingMessage, ServerResponse } from 'http';
+import { match, pathToRegexp } from 'path-to-regexp';
+import { createHash } from 'crypto';
+import { Db, Filter } from 'mongodb';
+import { LogEvent, LogType } from 'vivalaakam_seattle_client';
+
+import { makeId } from './make-id';
+import { BatchRequest, Listener, Params, StoreObject } from './types';
+import { NotFound } from './errors';
 
 export class Store {
   private db: Db;
+  private prefix: string;
   private readonly listeners: Listener<unknown>[];
 
-  constructor(db: Db, prefix = '/') {
+  private readonly onLogEvent?: (event: LogEvent) => void;
+
+  constructor(db: Db, prefix = '', onLogEvent?: (event: LogEvent) => void) {
     this.db = db;
+    this.prefix = prefix;
+    this.onLogEvent = onLogEvent;
 
     // @ts-ignore
     this.listeners = [
-      { method: 'get', path: `${prefix}class/:collection`, handler: this.list },
-      { method: 'get', path: `${prefix}class/:collection/:id`, handler: this.get },
-      { method: 'post', path: `${prefix}class/:collection`, handler: this.create },
-      { method: 'put', path: `${prefix}class/:collection/:id`, handler: this.update },
-      { method: 'delete', path: `${prefix}class/:collection/:id`, handler: this.delete },
-      { method: 'post', path: `${prefix}batch`, handler: this.batch },
+      { method: 'get', path: `${prefix}/class/:collection`, handler: this.list },
+      { method: 'get', path: `${prefix}/class/:collection/:id`, handler: this.get },
+      { method: 'post', path: `${prefix}/class/:collection`, handler: this.create },
+      { method: 'put', path: `${prefix}/class/:collection/:id`, handler: this.update },
+      { method: 'delete', path: `${prefix}/class/:collection/:id`, handler: this.delete },
+      { method: 'post', path: `${prefix}/batch`, handler: this.batch },
     ].map(l => ({
       ...l,
       regexp: pathToRegexp(l.path),
       match: match(l.path, { encode: encodeURI, decode: decodeURIComponent }),
     }));
+
+    for (const listener of this.listeners) {
+      console.log('registered handler', `${listener.method} ${listener.path}`);
+    }
   }
 
   async list(
@@ -105,11 +116,28 @@ export class Store {
     return responses;
   }
 
-  async listener(req: IncomingMessage, res: ServerResponse) {
+  async listener(req: IncomingMessage, res: ServerResponse, next?: () => void) {
     const queryObject = url.parse(req.url ?? '', true);
+
+    if (!queryObject.pathname?.startsWith(this.prefix)) {
+      return next?.();
+    }
+
     const handler = this.getListener(queryObject.pathname ?? '', req.method ?? 'GET');
 
     if (!handler) {
+      this.onLogEvent?.({
+        event: 'error:404',
+        requestId: `${req.method}:${req.url}`,
+        date: new Date(),
+        message: 'handler not found',
+        data: {
+          method: req.method,
+          url: req.url,
+        },
+        type: LogType.error,
+      });
+
       res.writeHead(404, {
         'Content-Type': 'text/plain',
         'Cache-Control': 'no-cache',
@@ -141,12 +169,38 @@ export class Store {
       }
     } catch (e) {
       if (e instanceof NotFound) {
+        this.onLogEvent?.({
+          event: 'error:404',
+          requestId: `${req.method}:${req.url}`,
+          date: new Date(),
+          message: 'object not found',
+          data: {
+            method: req.method,
+            url: req.url,
+          },
+          type: LogType.error,
+        });
+
         res.writeHead(404, {
           'Content-Type': 'text/plain',
           'Cache-Control': 'no-cache',
         });
         res.end('');
         return;
+      }
+
+      if (e instanceof Error) {
+        this.onLogEvent?.({
+          event: 'error:500',
+          requestId: `${req.method}:${req.url}`,
+          date: new Date(),
+          message: e.message,
+          data: {
+            method: req.method,
+            url: req.url,
+          },
+          type: LogType.error,
+        });
       }
 
       res.writeHead(500, {

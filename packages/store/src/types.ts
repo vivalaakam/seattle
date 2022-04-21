@@ -1,10 +1,12 @@
 import { Filter } from 'mongodb';
 import { MatchFunction } from 'path-to-regexp';
+import { LogEvent } from 'vivalaakam_seattle_client';
 
 export type MiddlewareProps = {
   dbConnection: string;
   dbName: string;
   basePath?: string;
+  onLogEvent?: (event: LogEvent) => void;
 };
 
 export type StoreObject<T> = {

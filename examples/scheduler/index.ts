@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
-import { LogEvent, middleware } from 'vivalaakam_seattle_scheduler';
+import { middleware } from 'vivalaakam_seattle_scheduler';
+import { LogEvent } from 'vivalaakam_seattle_client';
 import { PORT } from './constants';
 
 const onLogEvent = (event: LogEvent) => {

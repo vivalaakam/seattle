@@ -1,31 +1,13 @@
 import { CronExpression } from 'cron-parser';
 import { Request } from 'express';
+import { LogEvent, LogType } from 'vivalaakam_seattle_client';
 import { Scheduler } from './scheduler';
-
-export enum LogType {
-  error = 'error',
-  info = 'info',
-  debug = 'debug',
-}
-
-export type LogFunction = (message: string, data?: object, type?: LogType) => void;
-
-export type PublishEventFunction = (event: string, data?: object) => void;
 
 export type WorkerOptions = {
   cronJob?: string[];
 };
 
 export type WorkerCallback<T> = (params: T) => void;
-
-export type LogEvent = {
-  event: string;
-  requestId: string;
-  date: Date;
-  message: string;
-  data: object;
-  type: LogType;
-};
 
 export type QueueEvent = {
   name: string;

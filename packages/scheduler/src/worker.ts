@@ -1,17 +1,15 @@
 import { isMainThread, parentPort, workerData } from 'worker_threads';
 import EventEmitter from 'events';
-import { log, setEmitter } from 'vivalaakam_seattle_client';
+import { log, setEmitter, LogType } from 'vivalaakam_seattle_client';
 
 import { WorkerHandler } from './worker_handler';
-import { LogType } from './types';
 
 const emitter = new EventEmitter();
 setEmitter(emitter);
 
-
-emitter.on('message', (message) => {
+emitter.on('message', message => {
   parentPort?.postMessage(message);
-})
+});
 
 async function run(filename: string, params: unknown = {}) {
   const handler = await import(filename);

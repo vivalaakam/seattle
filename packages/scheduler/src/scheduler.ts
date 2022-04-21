@@ -1,9 +1,10 @@
 import { parseExpression } from 'cron-parser';
 import EventEmitter from 'events';
 import path from 'path';
+import { LogType } from 'vivalaakam_seattle_client';
 
 import { Worker } from 'worker_threads';
-import { CronSubscription, LogType, QueueEvent, WorkerEvent } from './types';
+import { CronSubscription, QueueEvent, WorkerEvent } from './types';
 import { makeId, sleep } from './utils';
 
 export class Scheduler extends EventEmitter {
