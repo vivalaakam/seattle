@@ -1,5 +1,6 @@
 {
   "name": "scheduler_example",
+  "private": true,
   "version": "1.0.1",
   "description": "",
   "main": "index.js",
@@ -10,8 +11,8 @@
   "author": "Andrey Makarov",
   "license": "ISC",
   "dependencies": {
-    "vivalaakam_seattle_client": "latest",
-    "vivalaakam_seattle_scheduler": "latest",
+    "vivalaakam_seattle_client": "^0.0.5",
+    "vivalaakam_seattle_scheduler": "^0.0.5",
     "body-parser": "^1.20.0",
     "express": "^4.17.3"
   }
