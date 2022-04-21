@@ -10,6 +10,11 @@ describe('blackbox testing', () => {
     await connect();
   });
 
+  afterEach(async () => {
+    await clear();
+  });
+  afterAll(async () => await close());
+
   [
     { name: 'work without basePath', basePath: '' },
     {
@@ -18,17 +23,13 @@ describe('blackbox testing', () => {
     },
   ].forEach(({ name, basePath }) => {
     describe(name, () => {
-      beforeAll(async () => {
+      beforeAll(() => {
         const dbParams = params();
 
         agent = request.agent(
           seedApp({ dbConnection: dbParams.dbConnection, dbName: dbParams.dbName, basePath })
         );
       });
-      afterEach(async () => {
-        await clear();
-      });
-      afterAll(async () => await close());
 
       describe('POST /class/:className', () => {
         it('should create object', async () => {

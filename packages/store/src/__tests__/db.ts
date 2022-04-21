@@ -6,12 +6,14 @@ let mongoServer: MongoMemoryServer;
 const dbName = 'testDb';
 
 export const connect = async () => {
-  mongoServer = await MongoMemoryServer.create({
-    instance: {
-      dbName,
-    },
-  });
-  connection = await MongoClient.connect(mongoServer.getUri(), {});
+  if (!connection) {
+    mongoServer = await MongoMemoryServer.create({
+      instance: {
+        dbName,
+      },
+    });
+    connection = await MongoClient.connect(mongoServer.getUri(), {});
+  }
 };
 
 export const params = () => {
@@ -22,14 +24,18 @@ export const params = () => {
 };
 
 export const close = async () => {
-  await connection.db(dbName).dropDatabase();
-  await connection.close();
-  await mongoServer.stop();
+  if(connection) {
+    await connection.db(dbName).dropDatabase();
+    await connection.close();
+    await mongoServer.stop();
+  }
 };
 
 export const clear = async () => {
-  const collections = await connection.db(dbName).collections();
-  for (const collection of collections) {
-    await collection.deleteMany({});
+  if(connection) {
+    const collections = await connection.db(dbName).collections();
+    for (const collection of collections) {
+      await collection.deleteMany({});
+    }
   }
 };
