@@ -10,8 +10,8 @@
   "author": "Andrey Makarov",
   "license": "ISC",
   "dependencies": {
-    "vivalaakam_seattle_client": "^0.0.7",
-    "vivalaakam_seattle_store": "^0.0.7",
+    "vivalaakam_seattle_client": "^0.0.8",
+    "vivalaakam_seattle_store": "^0.0.8",
     "express": "^4.17.3",
     "mongodb": "^4.5.0"
   }
