@@ -18,7 +18,8 @@ jobs:
         with:
           node-version: 16
       - run: npm ci
-      - run: npm test --ws
+      - run: npm run build --workspace packages
+      - run: npm test --workspace packages
 
   publish-gpr:
     needs: build
