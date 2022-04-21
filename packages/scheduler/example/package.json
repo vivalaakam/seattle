@@ -1,0 +1,18 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc --skipLibCheck --project ./tsconfig.json"
+  },
+  "author": "Andrey Makarov",
+  "license": "ISC",
+  "dependencies": {
+    "vivalaakam_seattle_client": "latest",
+    "vivalaakam_seattle_scheduler": "latest",
+    "body-parser": "^1.20.0",
+    "express": "^4.17.3"
+  }
+}
