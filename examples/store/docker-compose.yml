@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: seattle_example_store
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: seattle
+      MONGO_INITDB_ROOT_PASSWORD: seattle_pass
+    volumes:
+      - ./mongo:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+    networks:
+      - external-net
+
+networks:
+  external-net:
+    driver: bridge
