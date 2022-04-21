@@ -33,7 +33,7 @@ jobs:
           node-version: 16
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-      - run: npm run build --ws
-      - run: npm publish --ws
+      - run: npm run build --workspace packages
+      - run: npm publish --workspace packages
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
