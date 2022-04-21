@@ -1,4 +1,4 @@
-import { LogFunction, PublishEventFunction, WorkerCallback, WorkerOptions } from './types';
+import { WorkerCallback, WorkerOptions } from './types';
 
 export class WorkerHandler<T> {
   name: string;
@@ -11,7 +11,7 @@ export class WorkerHandler<T> {
     this.cronJob = params.cronJob ?? [];
   }
 
-  call(params: T, log: LogFunction, publishEvent: PublishEventFunction) {
-    return this.callback(params, { log, publishEvent });
+  call(params: T) {
+    return this.callback(params);
   }
 }

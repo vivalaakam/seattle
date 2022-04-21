@@ -12,16 +12,11 @@ export type LogFunction = (message: string, data?: object, type?: LogType) => vo
 
 export type PublishEventFunction = (event: string, data?: object) => void;
 
-export type CallbackContext = {
-  log: LogFunction;
-  publishEvent: PublishEventFunction;
-};
-
 export type WorkerOptions = {
   cronJob?: string[];
 };
 
-export type WorkerCallback<T> = (params: T, context: CallbackContext) => void;
+export type WorkerCallback<T> = (params: T) => void;
 
 export type LogEvent = {
   event: string;

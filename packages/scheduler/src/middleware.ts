@@ -29,7 +29,7 @@ export function middleware({ onLogEvent, basePath = '/', functions = './function
     const files = readdirSync(functions);
 
     for (const file of files) {
-      if (file !== '.' && file !== '..' && (file.endsWith('.js') || file.endsWith('.ts'))) {
+      if (file !== '.' && file !== '..' && file.endsWith('.js')) {
         const filename = path.join(functions, file);
         const function_handler = await import(filename);
 
