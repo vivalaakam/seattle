@@ -5,7 +5,7 @@ import { LogType } from 'vivalaakam_seattle_client';
 
 import { Worker } from 'worker_threads';
 import { CronSubscription, QueueEvent, WorkerEvent } from './types';
-import { makeId, sleep } from './utils';
+import { makeId, sleep } from 'vivalaakam_seattle_utils';
 
 export class Scheduler extends EventEmitter {
   private _subscriptions = new Map<string, string>();
@@ -67,6 +67,10 @@ export class Scheduler extends EventEmitter {
         }
       });
     });
+  }
+
+  events() {
+    return [...this._subscriptions.keys()];
   }
 
   createEvent(event: string, target: string) {

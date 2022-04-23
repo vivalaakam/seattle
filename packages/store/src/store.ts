@@ -2,11 +2,11 @@ import * as url from 'url';
 import { IncomingMessage, ServerResponse } from 'http';
 import { match, pathToRegexp } from 'path-to-regexp';
 import { createHash } from 'crypto';
-import { Db, Filter } from 'mongodb';
+import { Db, Filter, Sort } from 'mongodb';
 import { LogEvent, LogType } from 'vivalaakam_seattle_client';
 
 import { makeId } from './make-id';
-import { BatchRequest, Listener, Params, StoreObject } from './types';
+import { BatchRequest, Listener, Options, Params, StoreObject } from './types';
 import { NotFound } from './errors';
 
 export class Store {
@@ -43,9 +43,19 @@ export class Store {
   async list(
     keys: Params,
     body: unknown,
-    filter: Filter<StoreObject<object>> = {}
+    filter = {},
+    options: Options
   ): Promise<Array<StoreObject<object>>> {
-    return this.db.collection<StoreObject<object>>(keys.collection).find(filter).toArray();
+    const sortKey = options.sort ?? '-createdAt';
+
+    const opts = {
+      limit: parseInt(options.limit ?? '500', 10),
+      sort: (sortKey.startsWith('-') ? { [sortKey.slice(1)]: 'desc' } : { [sortKey]: 'asc' }) as Sort,
+    };
+
+    console.log('opts', opts);
+
+    return this.db.collection<StoreObject<object>>(keys.collection).find(filter, opts).toArray();
   }
 
   async get(keys: Params): Promise<StoreObject<object>> {
@@ -156,13 +166,19 @@ export class Store {
         }
 
         const body = buffers.length ? JSON.parse(Buffer.concat(buffers).toString()) : {};
-        const filters = new URLSearchParams(queryObject.search ?? '');
+        const additionOptions = new URLSearchParams(queryObject.search ?? '');
+
+        const options = {
+          limit: additionOptions.get('limit'),
+          sort: additionOptions.get('sort'),
+        };
 
         const response = await handler.handler.call(
           this,
           keys.params,
           body,
-          JSON.parse(filters.get('filter') ?? '{}') as Filter<Partial<StoreObject<object>>>
+          JSON.parse(additionOptions.get('filter') ?? '{}') as Filter<Partial<StoreObject<object>>>,
+          options
         );
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(response));

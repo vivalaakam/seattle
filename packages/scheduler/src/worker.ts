@@ -1,6 +1,6 @@
 import { isMainThread, parentPort, workerData } from 'worker_threads';
 import EventEmitter from 'events';
-import { log, setEmitter, LogType } from 'vivalaakam_seattle_client';
+import { log, LogType, setEmitter } from 'vivalaakam_seattle_client';
 
 import { WorkerHandler } from './worker_handler';
 

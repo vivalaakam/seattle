@@ -1,0 +1,15 @@
+.eventLogs {
+  .events {
+    display: block;
+    width: 100%;
+  }
+
+  .eventsList {
+    display: flex;
+    gap: 10px;
+  }
+
+  .eventItem {
+    padding: 5px;
+  }
+}

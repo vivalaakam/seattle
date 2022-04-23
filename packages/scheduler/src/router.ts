@@ -1,6 +1,7 @@
 import { Response, Router } from 'express';
 import { CustomRequest } from './types';
-import { makeId } from './utils';
+import { LogEvent } from 'vivalaakam_seattle_client';
+import { makeId } from 'vivalaakam_seattle_utils';
 
 export const router = Router();
 
@@ -11,7 +12,12 @@ router.post('/:event', (req: CustomRequest, res: Response) => {
     .catch(() => res.status(404));
 });
 
-router.get('/events', (req: CustomRequest, res: Response) => {
+router.get('/registeredEvents', (req: CustomRequest, res: Response) => {
+  const events = req.scheduler?.events() ?? [];
+  res.json({ events });
+});
+
+router.get('/streamEvents', (req: CustomRequest, res: Response) => {
   const headers = {
     'Content-Type': 'text/event-stream',
     Connection: 'keep-alive',
@@ -26,15 +32,18 @@ router.get('/events', (req: CustomRequest, res: Response) => {
 
   res.write(`data: ${JSON.stringify(connection)}\n\n`);
 
-  req.scheduler?.on('log', event => {
+  const subscription = (event: LogEvent) => {
     const data = {
       type: 'log',
       event,
     };
+
     res.write(`data: ${JSON.stringify(data)}\n\n`);
-  });
+  };
+  req.scheduler?.on('log', subscription);
 
   req.on('close', () => {
+    req.scheduler?.off('log', subscription);
     console.log(`${connection.id} Connection closed`);
   });
 });

@@ -22,7 +22,8 @@ export type Listener<T> = {
   handler: (
     keys: Params,
     body?: object,
-    filter?: null | Filter<Partial<StoreObject<object>>>
+    filter?: null | Filter<Partial<StoreObject<object>>>,
+    options?: Options
   ) => Promise<StoreObject<T> | Array<StoreObject<T>>>;
   method: string;
 };
@@ -30,6 +31,11 @@ export type Listener<T> = {
 export type Params = {
   collection: string;
   id?: string;
+};
+
+export type Options = {
+  limit: string | null;
+  sort: string | null;
 };
 
 export type BatchRequest = {

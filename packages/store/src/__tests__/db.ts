@@ -24,7 +24,7 @@ export const params = () => {
 };
 
 export const close = async () => {
-  if(connection) {
+  if (connection) {
     await connection.db(dbName).dropDatabase();
     await connection.close();
     await mongoServer.stop();
@@ -32,7 +32,7 @@ export const close = async () => {
 };
 
 export const clear = async () => {
-  if(connection) {
+  if (connection) {
     const collections = await connection.db(dbName).collections();
     for (const collection of collections) {
       await collection.deleteMany({});

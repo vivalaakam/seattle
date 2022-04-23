@@ -1,0 +1,27 @@
+.eventTag {
+  --color-main: #2051E5;
+  --color-second: #F4F6FD;
+
+  position: relative;
+  cursor: pointer;
+
+  .input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+
+    &:checked ~ .title {
+      color: var(--color-second);
+      background-color: var(--color-main);
+    }
+  }
+
+  .title {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--color-main);
+    color: var(--color-main);
+    background-color: var(--color-second);
+  }
+}

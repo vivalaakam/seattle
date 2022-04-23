@@ -126,6 +126,51 @@ describe('blackbox testing', () => {
           expect(res?.body).toBeTruthy();
           expect(res?.body.length).toEqual(1);
         });
+
+        it('should use limit option', async () => {
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 1', filterProperty: '1' });
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 2', filterProperty: '2' });
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 3', filterProperty: '3' });
+
+          const res = await agent?.get(`${basePath}/class/test?limit=2`).send();
+          expect(res?.statusCode).toEqual(200);
+          expect(res?.body).toBeTruthy();
+          expect(res?.body.length).toEqual(2);
+        });
+
+        it('should use sort option', async () => {
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 1', filterProperty: '1' });
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 2', filterProperty: '2' });
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 3', filterProperty: '3' });
+
+          const res = await agent?.get(`${basePath}/class/test?sort=filterProperty`).send();
+          expect(res?.statusCode).toEqual(200);
+          expect(res?.body).toBeTruthy();
+          expect(res?.body.length).toEqual(3);
+          expect(res?.body[0]).toEqual(
+            expect.objectContaining({
+              name: 'test-tag 1',
+              filterProperty: '1',
+            })
+          );
+        });
+
+        it('should use sort desc option', async () => {
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 1', filterProperty: '1' });
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 2', filterProperty: '2' });
+          await agent?.post(`${basePath}/class/test`).send({ name: 'test-tag 3', filterProperty: '3' });
+
+          const res = await agent?.get(`${basePath}/class/test?sort=-filterProperty`).send();
+          expect(res?.statusCode).toEqual(200);
+          expect(res?.body).toBeTruthy();
+          expect(res?.body.length).toEqual(3);
+          expect(res?.body[0]).toEqual(
+            expect.objectContaining({
+              name: 'test-tag 3',
+              filterProperty: '3',
+            })
+          );
+        });
       });
 
       describe('POST /batch', () => {
