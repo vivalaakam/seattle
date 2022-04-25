@@ -2,6 +2,7 @@ import { AppConfig, LogEvent, SearchParams } from './types';
 
 export class Api {
   private _handlers = '';
+
   private _store = '';
 
   init(config: AppConfig) {

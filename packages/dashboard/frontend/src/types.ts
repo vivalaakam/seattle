@@ -1,4 +1,5 @@
 import { LogType } from 'vivalaakam_seattle_client';
+import { ReactNode } from 'react';
 
 export type AppConfig = {
   handlers?: string;
@@ -8,8 +9,6 @@ export type AppConfig = {
 export type AppProps = {
   publicHost: string;
 };
-
-export type ConfigProps = {};
 
 export type StreamEvent =
   | {
@@ -34,4 +33,6 @@ export type SearchParams = {
   filter?: object;
   limit?: number;
   sort?: string;
-}
+};
+
+export type PropsWithChildren<P> = P & { children?: ReactNode | undefined };

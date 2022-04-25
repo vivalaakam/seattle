@@ -1,13 +1,12 @@
-import { DashboardMiddleware } from './types';
 import { IncomingMessage, ServerResponse } from 'http';
 import url from 'url';
 import path from 'path';
 import fs from 'fs';
+import { DashboardMiddleware } from './types';
 
 export function middleware({ basePath = '', handlersHost = '/', storeHost = '/' }: DashboardMiddleware) {
   const template = fs.readFileSync(path.join(__dirname, 'public/index.html'), 'utf-8');
-  const compiledTemplate = template
-    .replace('{{publicHost}}', basePath);
+  const compiledTemplate = template.replace('{{publicHost}}', basePath);
 
   return (req: IncomingMessage, res: ServerResponse, next?: () => void) => {
     const queryObject = url.parse(req.url ?? '', true);
@@ -19,7 +18,7 @@ export function middleware({ basePath = '', handlersHost = '/', storeHost = '/' 
     if (queryObject.pathname === `${basePath}/config`) {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ handlers: handlersHost, store: storeHost }));
-      return;
+      return null;
     }
 
     const localPath = queryObject.pathname?.split('/');
@@ -30,10 +29,10 @@ export function middleware({ basePath = '', handlersHost = '/', storeHost = '/' 
       const stream = fs.createReadStream(file);
       stream.pipe(res);
 
-      return;
+      return null;
     }
 
     res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(compiledTemplate);
+    return res.end(compiledTemplate);
   };
 }

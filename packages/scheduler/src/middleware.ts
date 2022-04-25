@@ -28,22 +28,24 @@ export function middleware({ onLogEvent, basePath = '/', functions = './function
   app.on('mount', async () => {
     const files = readdirSync(functions);
 
-    for (const file of files) {
-      if (file !== '.' && file !== '..' && file.endsWith('.js')) {
-        const filename = path.join(functions, file);
-        const function_handler = await import(filename);
+    await Promise.allSettled(
+      files.map(async file => {
+        if (file !== '.' && file !== '..' && file.endsWith('.js')) {
+          const filename = path.join(functions, file);
+          const functionHandler = await import(filename);
 
-        if (function_handler.default instanceof WorkerHandler) {
-          scheduler.createEvent(function_handler.default.name, filename);
+          if (functionHandler.default instanceof WorkerHandler) {
+            scheduler.createEvent(functionHandler.default.name, filename);
 
-          for (const cronJob of function_handler.default.cronJob) {
-            scheduler.createTimer(function_handler.default.name, cronJob);
+            functionHandler.default.cronJob.forEach((cronJob: string | number | Date) => {
+              scheduler.createTimer(functionHandler.default.name, cronJob);
+            });
+
+            console.log('registered event', functionHandler.default.name);
           }
-
-          console.log('registered event', function_handler.default.name);
         }
-      }
-    }
+      })
+    );
 
     scheduler.startTimer();
   });

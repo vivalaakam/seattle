@@ -16,9 +16,8 @@ async function run(filename: string, params: unknown = {}) {
 
   if (handler.default instanceof WorkerHandler) {
     return handler.default.call(params);
-  } else {
-    throw new Error('wrong file');
   }
+  throw new Error('wrong file');
 }
 
 if (!isMainThread && parentPort) {

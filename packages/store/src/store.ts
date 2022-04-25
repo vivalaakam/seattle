@@ -11,7 +11,9 @@ import { NotFound } from './errors';
 
 export class Store {
   private db: Db;
+
   private prefix: string;
+
   private readonly listeners: Listener<unknown>[];
 
   private readonly onLogEvent?: (event: LogEvent) => void;
@@ -110,16 +112,17 @@ export class Store {
         continue;
       }
 
-      const keys = handler.match(request.path);
+      const pathKeys = handler.match(request.path);
 
-      if (!keys) {
+      if (!pathKeys) {
         responses.push({
           error: 'not found',
         });
         continue;
       }
 
-      const response = await handler.handler.call(this, keys.params, request.body);
+      // eslint-disable-next-line no-await-in-loop
+      const response = await handler.handler.call(this, pathKeys.params, request.body);
       responses.push(response);
     }
 
@@ -153,7 +156,7 @@ export class Store {
         'Cache-Control': 'no-cache',
       });
       res.end('');
-      return;
+      return null;
     }
 
     try {
@@ -202,7 +205,7 @@ export class Store {
           'Cache-Control': 'no-cache',
         });
         res.end('');
-        return;
+        return null;
       }
 
       if (e instanceof Error) {
@@ -227,9 +230,9 @@ export class Store {
     }
   }
 
-  getListener(url: string, method: string) {
+  getListener(pathUrl: string, method: string) {
     for (const h of this.listeners) {
-      if (h.regexp.test(url) && method.toLowerCase() === h.method) {
+      if (h.regexp.test(pathUrl) && method.toLowerCase() === h.method) {
         return h;
       }
     }

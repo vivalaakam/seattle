@@ -1,7 +1,7 @@
 import { Response, Router } from 'express';
-import { CustomRequest } from './types';
 import { LogEvent } from 'vivalaakam_seattle_client';
 import { makeId } from 'vivalaakam_seattle_utils';
+import { CustomRequest } from './types';
 
 export const router = Router();
 

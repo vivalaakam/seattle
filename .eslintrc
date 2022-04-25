@@ -1,16 +1,23 @@
 {
   "parser": "@typescript-eslint/parser",
   "extends": [
-      "prettier",
-      "eslint:recommended",
-      "plugin:@typescript-eslint/eslint-recommended",
-      "plugin:@typescript-eslint/recommended"
+    "airbnb",
+    "prettier",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
-  "plugins": [ "prettier", "@typescript-eslint" ],
+  "plugins": [
+    "react",
+    "prettier",
+    "@typescript-eslint"
+  ],
   "env": {
     "jest": true
   },
-  "ignorePatterns": ["./lib"],
+  "ignorePatterns": [
+    "./lib"
+  ],
   "parserOptions": {
     "ecmaVersion": 2019,
     "sourceType": "module",
@@ -25,12 +32,44 @@
     },
     "import/resolver": {
       "node": {
-        "extensions": [ ".js", ".jsx", ".ts", ".tsx" ]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
     }
   },
   "rules": {
-    "prettier/prettier": [ "error", { "singleQuote": true } ],
+    "import/prefer-default-export": "off",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ],
+    "react/jsx-filename-extension": [
+      2,
+      {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true
+      }
+    ],
     "no-underscore-dangle": 0,
     "no-nested-ternary": 1,
     "no-use-before-define": 0,

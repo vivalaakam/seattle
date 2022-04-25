@@ -1,12 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import { makeId } from 'vivalaakam_seattle_utils';
 import { LogEvent, StreamEvent } from '../../types';
 import { api } from '../../api';
-import { makeId } from 'vivalaakam_seattle_utils';
 import { EventLog } from '../event-log';
 import { EventTag } from './event-tag';
 import styles from './event-logs.module.scss';
 
-export const EventLogs = () => {
+export function EventLogs() {
   const [events, setEvents] = useState<string[]>([]);
   const [activeEvents, setActiveEvents] = useState<string[]>([]);
 
@@ -21,9 +21,9 @@ export const EventLogs = () => {
   };
 
   useEffect(() => {
-    api.getRegisteredEvents().then(events => {
-      setEvents(events.events);
-      setActiveEvents(events.events);
+    api.getRegisteredEvents().then(resp => {
+      setEvents(resp.events);
+      setActiveEvents(resp.events);
     });
   }, []);
 
@@ -39,7 +39,7 @@ export const EventLogs = () => {
     const evtSource = new EventSource(`${api.handlers}/streamEvents`);
     evtSource.onmessage = function (event) {
       const data = JSON.parse(event.data) as StreamEvent;
-      if (data.type == 'log') {
+      if (data.type === 'log') {
         setLog(current => current.concat({ _id: makeId(10), ...data.event }));
       }
     };
@@ -56,14 +56,14 @@ export const EventLogs = () => {
       </div>
 
       <table className={styles.events}>
-        <thead className="table__header">
-          <tr className="table__row">
-            <th className="table__cell u-text-left">Date</th>
-            <th className="table__cell u-text-right">Request ID</th>
-            <th className="table__cell u-text-right">Type</th>
-            <th className="table__cell u-text-right">Event</th>
-            <th className="table__cell u-text-right">Message</th>
-            <th className="table__cell u-text-right">Data</th>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Request ID</th>
+            <th>Type</th>
+            <th>Event</th>
+            <th>Message</th>
+            <th>Data</th>
           </tr>
         </thead>
         <tbody>
@@ -74,4 +74,4 @@ export const EventLogs = () => {
       </table>
     </div>
   );
-};
+}

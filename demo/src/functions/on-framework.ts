@@ -1,7 +1,7 @@
 import { WorkerHandler } from 'vivalaakam_seattle_scheduler';
 import { log } from 'vivalaakam_seattle_client';
-import { HANDLER_HOST, STORAGE_HOST } from '../constants';
 import axios from 'axios';
+import { HANDLER_HOST, STORAGE_HOST } from '../constants';
 import { Author, Framework } from '../types';
 
 export default new WorkerHandler('onFramework', async () => {

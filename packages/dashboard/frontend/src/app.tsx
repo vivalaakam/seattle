@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { AppConfig, AppProps } from './types';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { AppConfig, AppProps } from './types';
 import { Logs } from './pages/logs';
 import { api } from './api';
 
-export const App = ({ publicHost }: AppProps) => {
+export function App({ publicHost }: AppProps) {
   const [config, setConfig] = useState<AppConfig | null>(null);
 
   useEffect(() => {
@@ -27,4 +27,4 @@ export const App = ({ publicHost }: AppProps) => {
       </Routes>
     </Router>
   );
-};
+}

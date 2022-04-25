@@ -8,7 +8,7 @@ const { NODE_ENV = 'development', WEBPACK_PORT = 3001 } = process.env;
 const __DEV__ = NODE_ENV === 'development';
 
 const config = {
-  entry: './frontend/index.tsx',
+  entry: './frontend/src/index.tsx',
   module: {
     rules: [
       {
@@ -16,13 +16,7 @@ const config = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
-              plugins: [
-                ['@babel/transform-runtime']
-              ]
-            },
+            loader: 'babel-loader'
           },
         ],
       },

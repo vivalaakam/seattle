@@ -1,7 +1,8 @@
 .eventLogs {
   .events {
-    display: block;
     width: 100%;
+    margin: 20px auto;
+    table-layout: auto;
   }
 
   .eventsList {

@@ -16,12 +16,10 @@ export const connect = async () => {
   }
 };
 
-export const params = () => {
-  return {
-    dbConnection: mongoServer.getUri(),
-    dbName,
-  };
-};
+export const params = () => ({
+  dbConnection: mongoServer.getUri(),
+  dbName,
+});
 
 export const close = async () => {
   if (connection) {

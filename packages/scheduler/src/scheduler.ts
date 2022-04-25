@@ -4,13 +4,16 @@ import path from 'path';
 import { LogType } from 'vivalaakam_seattle_client';
 
 import { Worker } from 'worker_threads';
-import { CronSubscription, QueueEvent, WorkerEvent } from './types';
 import { makeId, sleep } from 'vivalaakam_seattle_utils';
+import { CronSubscription, QueueEvent, WorkerEvent } from './types';
 
 export class Scheduler extends EventEmitter {
   private _subscriptions = new Map<string, string>();
+
   private _locked = false;
+
   private _queue: QueueEvent[] = [];
+
   private _timers: Array<CronSubscription> = [];
 
   handler(eventName: string, data: object = {}) {
@@ -114,6 +117,7 @@ export class Scheduler extends EventEmitter {
       const event = this._queue.shift();
       if (event) {
         try {
+          // eslint-disable-next-line no-await-in-loop
           await this.handler(event.name, event.data);
         } catch (e) {
           if (e instanceof Error) {
@@ -156,6 +160,7 @@ export class Scheduler extends EventEmitter {
         this.immediatelyEvent({ name: event.value, data: {} });
       }
 
+      // eslint-disable-next-line no-await-in-loop
       await sleep();
 
       event = this.nextTimer();

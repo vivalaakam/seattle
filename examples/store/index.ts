@@ -1,7 +1,7 @@
 import express from 'express';
 import { middleware } from 'vivalaakam_seattle_store';
-import { DB_CONNECTION, DB_NAME, PORT } from './constants';
 import { LogEvent } from 'vivalaakam_seattle_client';
+import { DB_CONNECTION, DB_NAME, PORT } from './constants';
 
 const onLogEvent = (event: LogEvent) => {
   console.log(

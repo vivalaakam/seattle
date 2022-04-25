@@ -2,7 +2,9 @@ import { WorkerCallback, WorkerOptions } from './types';
 
 export class WorkerHandler<T> {
   name: string;
+
   callback: WorkerCallback<T>;
+
   cronJob: string[];
 
   constructor(name: string, callback: WorkerCallback<T>, params: WorkerOptions = {}) {

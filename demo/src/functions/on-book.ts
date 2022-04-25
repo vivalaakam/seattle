@@ -1,8 +1,8 @@
 import { WorkerHandler } from 'vivalaakam_seattle_scheduler';
 import { log } from 'vivalaakam_seattle_client';
 
-import { HANDLER_HOST, STORAGE_HOST } from '../constants';
 import axios from 'axios';
+import { HANDLER_HOST, STORAGE_HOST } from '../constants';
 import { Author, Book } from '../types';
 
 export default new WorkerHandler('onBook', async () => {

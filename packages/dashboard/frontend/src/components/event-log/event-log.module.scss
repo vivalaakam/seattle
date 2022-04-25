@@ -1,0 +1,27 @@
+.log {
+  cursor: pointer;
+  &:hover {
+    background-color: #F0F0F5;
+  }
+
+  td {
+    padding: 5px;
+    border-collapse: collapse;
+  }
+
+  .date {
+    width: 200px;
+  }
+
+  .requestId {
+    width: 200px;
+  }
+
+  .type {
+    width: 100px;
+  }
+}
+
+.extended {
+
+}

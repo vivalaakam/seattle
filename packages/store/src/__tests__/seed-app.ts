@@ -1,5 +1,5 @@
-import { MiddlewareProps } from '../types';
 import express from 'express';
+import { MiddlewareProps } from '../types';
 import { middleware } from '../middleware';
 
 export const seedApp = ({ dbConnection, dbName, basePath = '/' }: MiddlewareProps) => {
