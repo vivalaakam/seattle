@@ -77,3 +77,4 @@ execSync('git add --all');
 execSync(`git commit -m "v${newVersion}"`);
 execSync(`git tag -a v${newVersion} -m v${newVersion}`);
 execSync(`git push origin v${newVersion}`);
+execSync(`git push`);
