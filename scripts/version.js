@@ -74,6 +74,6 @@ for (const pckgWS of packages) {
 execSync('npm install -ws');
 
 execSync('git add --all');
-execSync(`git commit -m "bump version ${newVersion}"`);
-execSync(`git tag -a ${newVersion} -m ${newVersion}`);
-execSync('git push');
+execSync(`git commit -m "v${newVersion}"`);
+execSync(`git tag -a v${newVersion} -m v${newVersion}`);
+execSync(`git push origin v${newVersion}`);
