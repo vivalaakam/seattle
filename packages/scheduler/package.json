@@ -1,6 +1,6 @@
 {
   "name": "vivalaakam_seattle_scheduler",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "body-parser": "^1.19.2",
     "cron-parser": "^4.3.0",
     "express": "^4.17.3",
-    "vivalaakam_seattle_client": "^0.0.9",
-    "vivalaakam_seattle_utils": "^0.0.9"
+    "vivalaakam_seattle_client": "0.0.10",
+    "vivalaakam_seattle_utils": "0.0.10"
   }
 }

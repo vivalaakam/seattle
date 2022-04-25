@@ -1,6 +1,6 @@
 {
   "name": "vivalaakam_seattle_store",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "mongodb": "^4.5.0"
   },
   "dependencies": {
-    "vivalaakam_seattle_client": "^0.0.9",
+    "vivalaakam_seattle_client": "0.0.10",
     "path-to-regexp": "^6.2.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "example_store",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,8 +10,8 @@
   "author": "Andrey Makarov",
   "license": "ISC",
   "dependencies": {
-    "vivalaakam_seattle_client": "^0.0.9",
-    "vivalaakam_seattle_store": "^0.0.9",
+    "vivalaakam_seattle_client": "0.0.10",
+    "vivalaakam_seattle_store": "0.0.10",
     "express": "^4.17.3",
     "mongodb": "^4.5.0"
   }

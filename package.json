@@ -1,12 +1,12 @@
 {
   "name": "seattle",
   "private": true,
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "",
   "main": "index.js",
   "workspaces": [
-    "./packages/*",
-    "./examples/*",
+    "packages/*",
+    "examples/*",
     "demo"
   ],
   "scripts": {
