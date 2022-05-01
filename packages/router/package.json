@@ -1,0 +1,29 @@
+{
+  "name": "vivalaakam_seattle_router",
+  "version": "0.0.12",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "lint": "eslint --ext .js,.ts src/*",
+    "build": "tsc",
+    "test": "jest --ci"
+  },
+  "author": "Andrey Makarov",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/supertest": "^2.0.12",
+    "express": "^4.17.3",
+    "mongodb": "^4.5.0",
+    "mongodb-memory-server": "^8.4.2",
+    "supertest": "^6.2.2"
+  },
+  "peerDependencies": {
+    "mongodb": "^4.5.0"
+  },
+  "dependencies": {
+    "vivalaakam_seattle_client": "0.0.12",
+    "path-to-regexp": "^6.2.0"
+  }
+}
