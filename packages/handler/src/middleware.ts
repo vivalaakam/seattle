@@ -6,8 +6,13 @@ import { MiddlewareProps } from './types';
 import { WorkerHandler } from './worker_handler';
 import { Handler } from './handler';
 
-export function middleware({ onLogEvent, basePath = '/', functions = './functions' }: MiddlewareProps) {
-  const handler = new Handler(basePath);
+export function middleware({
+  onLogEvent,
+  basePath = '/',
+  parentHost = '',
+  functions = './functions',
+}: MiddlewareProps) {
+  const handler = new Handler(basePath, parentHost);
 
   if (onLogEvent) {
     handler.on('log', onLogEvent);
@@ -41,6 +46,7 @@ export function middleware({ onLogEvent, basePath = '/', functions = './function
               })
             )
           )
+          .then(() => handler.notifyParent())
           .then(() => {
             handler.initialized = true;
           });

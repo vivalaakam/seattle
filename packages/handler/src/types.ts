@@ -32,6 +32,7 @@ export type WorkerEvent = WorkerResultEvent | WorkerEventEvent | WorkerLogEvent;
 export type MiddlewareProps = {
   functions: string;
   basePath?: string;
+  parentHost?: string;
   onLogEvent?: (event: LogEvent) => void;
 };
 

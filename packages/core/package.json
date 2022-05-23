@@ -1,0 +1,20 @@
+{
+  "name": "vivalaakam_seattle_core",
+  "version": "0.0.12",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "lint": "eslint --ext .js,.ts src/*",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\""
+  },
+  "author": "Andrey Makarov",
+  "license": "ISC",
+  "dependencies": {
+    "cron-parser": "^4.3.0",
+    "vivalaakam_seattle_client": "0.0.12",
+    "vivalaakam_seattle_router": "0.0.12",
+    "vivalaakam_seattle_utils": "0.0.12"
+  }
+}

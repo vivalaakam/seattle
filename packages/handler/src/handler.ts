@@ -1,18 +1,14 @@
 import { Worker } from 'worker_threads';
 import EventEmitter from 'events';
 import path from 'path';
-import { LogEvent, LogType } from 'vivalaakam_seattle_client';
+import { EventEvent, LogEvent, LogType } from 'vivalaakam_seattle_client';
 import { makeId } from 'vivalaakam_seattle_utils';
 import { CustomRequest, CustomResponse, Router } from 'vivalaakam_seattle_router';
 
-import { CronSubscription, QueueEvent, WorkerEvent } from './types';
+import { CronSubscription, WorkerEvent } from './types';
 
 export class Handler extends EventEmitter {
   private _subscriptions = new Map<string, string>();
-
-  private _locked = false;
-
-  private _queue: QueueEvent[] = [];
 
   private _timers: Array<CronSubscription> = [];
 
@@ -20,13 +16,15 @@ export class Handler extends EventEmitter {
 
   readonly router: Router;
 
-  constructor(prefix = '') {
+  readonly parentHost;
+
+  constructor(prefix = '', parentHost = '') {
     super();
+    this.parentHost = parentHost;
     this.router = new Router(prefix);
-    this.router.get('/event/:eventName', this.handleEventRequest);
-    this.router.get('/registeredEvents', this.handleRegisteredEventRequest);
-    this.router.get('/registeredTimers', this.handleRegisteredTimersRequest);
-    this.router.get('/streamEvents', this.handleStreamEventRequest);
+    this.router.post('/event/:eventName', this.handleEventRequest);
+    this.router.get('/events', this.handleRegisteredEventRequest);
+    this.router.get('/timers', this.handleRegisteredTimersRequest);
   }
 
   get initialized() {
@@ -37,35 +35,32 @@ export class Handler extends EventEmitter {
     this._initialized = value;
   }
 
-  handleStreamEventRequest(req: CustomRequest<unknown, unknown, unknown>, res: CustomResponse) {
-    const headers = {
-      'Content-Type': 'text/event-stream',
-      Connection: 'keep-alive',
-      'Cache-Control': 'no-cache',
-    };
-    res.writeHead(200, headers);
+  async notifyParent() {
+    if (!this.parentHost) {
+      return Promise.resolve();
+    }
 
-    const connection = {
-      type: 'connected',
-      id: makeId(10),
-    };
+    return fetch(`${this.parentHost}/register`, {
+      method: 'POST',
+      body: JSON.stringify({
+        events: this.events(),
+        timers: this.timers(),
+      }),
+    })
+      .then(resp => resp.json())
+      .then(({ eventsRemote, logsRemote }) => {
+        if (logsRemote) {
+          this.on('log', (log: LogEvent) =>
+            fetch(logsRemote, { method: 'POST', body: JSON.stringify(log) })
+          );
+        }
 
-    res.write(`data: ${JSON.stringify(connection)}\n\n`);
-
-    const subscription = (event: LogEvent) => {
-      const data = {
-        type: 'log',
-        event,
-      };
-
-      res.write(`data: ${JSON.stringify(data)}\n\n`);
-    };
-    this.addListener('log', subscription);
-
-    req.on('close', () => {
-      this.removeListener('log', subscription);
-      console.log(`${connection.id} Connection closed`);
-    });
+        if (eventsRemote) {
+          this.on('event', (event: EventEvent) =>
+            fetch(eventsRemote, { method: 'POST', body: JSON.stringify(event) })
+          );
+        }
+      });
   }
 
   handleRegisteredEventRequest(req: CustomRequest<unknown, unknown, unknown>, res: CustomResponse) {
@@ -82,14 +77,16 @@ export class Handler extends EventEmitter {
 
   handleEventRequest(req: CustomRequest<object, { eventName: string }, unknown>, res: CustomResponse) {
     if (req?.params?.eventName) {
-      this.handler(req.params.eventName, req.body).then(response => {
+      const requestId = 'x-request-id' in req.headers ? String(req.headers['x-request-id']) : makeId(10);
+
+      this.handler(requestId, req.params.eventName, req.body).then(data => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(response));
+        res.end(JSON.stringify(data));
       });
     }
   }
 
-  handler(eventName: string, data: object = {}) {
+  handler(requestId: string, eventName: string, data: object = {}) {
     const filename = this._subscriptions.get(eventName);
 
     if (!filename) {
@@ -97,7 +94,6 @@ export class Handler extends EventEmitter {
     }
 
     return new Promise((resolve, reject) => {
-      const requestId = makeId(10);
       const worker = new Worker(path.join(__dirname, 'worker.js'), {
         workerData: {
           filename,
@@ -122,7 +118,13 @@ export class Handler extends EventEmitter {
 
             break;
           case 'event':
-            this.pushEvent(event);
+            this.emit('event', {
+              requestId,
+              date: new Date(),
+              event: event.event,
+              data: event.data,
+            });
+
             this.emit('log', {
               requestId,
               date: new Date(),
@@ -162,38 +164,5 @@ export class Handler extends EventEmitter {
       interval,
       event,
     });
-  }
-
-  pushEvent(event: QueueEvent) {
-    this._queue.push(event);
-    if (!this._locked) {
-      this.handleQueueEvent();
-    }
-  }
-
-  immediatelyEvent(event: QueueEvent) {
-    this._queue.unshift(event);
-    if (!this._locked) {
-      this.handleQueueEvent();
-    }
-  }
-
-  private async handleQueueEvent() {
-    this._locked = true;
-    while (this._queue.length) {
-      const event = this._queue.shift();
-      if (event) {
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          await this.handler(event.name, event.data);
-        } catch (e) {
-          if (e instanceof Error) {
-            console.log(e.message);
-          }
-        }
-      }
-    }
-
-    this._locked = false;
   }
 }

@@ -13,6 +13,13 @@ export type LogEvent = {
   type: LogType;
 };
 
+export type EventEvent = {
+  event: string;
+  requestId: string;
+  date: Date;
+  data: object;
+};
+
 export interface Emitter {
   emit(event: string, params: unknown): void;
 }
